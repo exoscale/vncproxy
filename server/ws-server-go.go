@@ -15,7 +15,6 @@ type WsServer struct {
 
 type WsHandler func(io.ReadWriter, *ServerConfig, string)
 
-
 func (wsServer *WsServer) Listen(urlStr string, handlerFunc WsHandler) {
 
 	if urlStr == "" {

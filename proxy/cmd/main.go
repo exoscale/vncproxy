@@ -18,6 +18,7 @@ func main() {
 	var targetVncPort = flag.String("targPort", "", "target vnc server port (deprecated, use -target)")
 	var targetVncHost = flag.String("targHost", "", "target vnc server host (deprecated, use -target)")
 	var targetVncPass = flag.String("targPass", "", "target vnc password")
+	var dynamicLookup = flag.Bool("dynamic-lookup", false, "lookup target UNIX socket path based on WebSocket URI")
 	var logLevel = flag.String("logLevel", "info", "change logging level")
 
 	flag.Parse()
@@ -32,6 +33,11 @@ func main() {
 	if *targetVnc == "" && *targetVncPort == "" {
 		logger.Error("no target vnc server host/port or socket defined")
 		flag.Usage()
+		os.Exit(1)
+	}
+
+	if *dynamicLookup && *wsPort == "" {
+		logger.Error("dynamic lookup requires specifying -wsPort")
 		os.Exit(1)
 	}
 
@@ -53,10 +59,11 @@ func main() {
 			TargetHostname: *targetVncHost,
 			TargetPort:     *targetVncPort,
 			TargetPassword: *targetVncPass, //"vncPass",
-			ID:             "dummySession",
+			ID:             "",
 			Status:         vncproxy.SessionStatusInit,
 			Type:           vncproxy.SessionTypeProxyPass,
 		}, // to be used when not using sessions
+		DynamicLookup: *dynamicLookup,
 		UsingSessions: false, //false = single session - defined in the var above
 	}
 
