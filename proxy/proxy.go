@@ -5,13 +5,13 @@ import (
 	"path"
 	"strconv"
 	"time"
-	"vncproxy/client"
-	"vncproxy/common"
-	"vncproxy/encodings"
-	"vncproxy/logger"
-	"vncproxy/player"
-	listeners "vncproxy/recorder"
-	"vncproxy/server"
+	"github.com/exoscale/vncproxy/client"
+	"github.com/exoscale/vncproxy/common"
+	"github.com/exoscale/vncproxy/encodings"
+	"github.com/exoscale/vncproxy/logger"
+	"github.com/exoscale/vncproxy/player"
+	listeners "github.com/exoscale/vncproxy/recorder"
+	"github.com/exoscale/vncproxy/server"
 )
 
 type VncProxy struct {

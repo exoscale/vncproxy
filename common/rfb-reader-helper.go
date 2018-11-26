@@ -5,7 +5,7 @@ import (
 	"encoding/binary"
 	"errors"
 	"io"
-	"vncproxy/logger"
+	"github.com/exoscale/vncproxy/logger"
 )
 
 var TightMinToCompress = 12

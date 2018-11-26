@@ -3,10 +3,10 @@ package player
 import (
 	"testing"
 	"time"
-	"vncproxy/common"
-	"vncproxy/encodings"
-	"vncproxy/logger"
-	"vncproxy/server"
+	"github.com/exoscale/vncproxy/common"
+	"github.com/exoscale/vncproxy/encodings"
+	"github.com/exoscale/vncproxy/logger"
+	"github.com/exoscale/vncproxy/server"
 )
 
 func TestServer(t *testing.T) {

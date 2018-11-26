@@ -2,8 +2,8 @@ package client
 
 import (
 	"io"
-	"vncproxy/common"
-	"vncproxy/logger"
+	"github.com/exoscale/vncproxy/common"
+	"github.com/exoscale/vncproxy/logger"
 )
 
 type WriteTo struct {

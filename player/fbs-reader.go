@@ -5,9 +5,9 @@ import (
 	"encoding/binary"
 	"io"
 	"os"
-	"vncproxy/common"
-	"vncproxy/encodings"
-	"vncproxy/logger"
+	"github.com/exoscale/vncproxy/common"
+	"github.com/exoscale/vncproxy/encodings"
+	"github.com/exoscale/vncproxy/logger"
 )
 
 type FbsReader struct {

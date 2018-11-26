@@ -3,8 +3,8 @@ package server
 import (
 	"log"
 	"testing"
-	"vncproxy/common"
-	"vncproxy/encodings"
+	"github.com/exoscale/vncproxy/common"
+	"github.com/exoscale/vncproxy/encodings"
 )
 
 func newServerConnHandler(cfg *ServerConfig, conn *ServerConn) error {

@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"errors"
 	"io"
-	"vncproxy/common"
-	"vncproxy/logger"
+	"github.com/exoscale/vncproxy/common"
+	"github.com/exoscale/vncproxy/logger"
 )
 
 var TightMinToCompress int = 12

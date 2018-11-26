@@ -5,9 +5,9 @@ import (
 	"encoding/binary"
 	"os"
 	"time"
-	"vncproxy/common"
-	"vncproxy/logger"
-	"vncproxy/server"
+	"github.com/exoscale/vncproxy/common"
+	"github.com/exoscale/vncproxy/logger"
+	"github.com/exoscale/vncproxy/server"
 )
 
 type Recorder struct {

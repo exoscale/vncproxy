@@ -3,8 +3,8 @@ package encodings
 import (
 	"fmt"
 	"io"
-	"vncproxy/common"
-	"vncproxy/logger"
+	"github.com/exoscale/vncproxy/common"
+	"github.com/exoscale/vncproxy/logger"
 )
 
 type TightPngEncoding struct {

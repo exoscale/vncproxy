@@ -5,11 +5,11 @@ import (
 	"net"
 	"os"
 	"time"
-	"vncproxy/client"
-	"vncproxy/common"
-	"vncproxy/encodings"
-	"vncproxy/logger"
-	"vncproxy/recorder"
+	"github.com/exoscale/vncproxy/client"
+	"github.com/exoscale/vncproxy/common"
+	"github.com/exoscale/vncproxy/encodings"
+	"github.com/exoscale/vncproxy/logger"
+	"github.com/exoscale/vncproxy/recorder"
 )
 
 func main() {
