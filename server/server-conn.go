@@ -50,7 +50,7 @@ type ServerConn struct {
 // 	return c.br.UnreadByte()
 // }
 
-func NewServerConn(c io.ReadWriter, cfg *ServerConfig) (*ServerConn, error) {
+func NewServerConn(c io.ReadWriter, cfg *ServerConfig, sessionId string) (*ServerConn, error) {
 	// if cfg.ClientMessageCh == nil {
 	// 	return nil, fmt.Errorf("ClientMessageCh nil")
 	// }
@@ -70,6 +70,7 @@ func NewServerConn(c io.ReadWriter, cfg *ServerConfig) (*ServerConn, error) {
 		fbWidth:     cfg.Width,
 		fbHeight:    cfg.Height,
 		Listeners:   &common.MultiListener{},
+		SessionId:   sessionId,
 	}, nil
 }
 

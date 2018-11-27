@@ -73,7 +73,7 @@ func TcpServe(url string, cfg *ServerConfig) error {
 
 func attachNewServerConn(c io.ReadWriter, cfg *ServerConfig, sessionId string) error {
 
-	conn, err := NewServerConn(c, cfg)
+	conn, err := NewServerConn(c, cfg, sessionId)
 	if err != nil {
 		return err
 	}

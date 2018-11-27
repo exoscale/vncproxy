@@ -21,6 +21,7 @@ type VncProxy struct {
 	ProxyVncPassword string      //empty = no auth
 	SingleSession    *VncSession // to be used when not using sessions
 	UsingSessions    bool        //false = single session - defined in the var above
+	DynamicLookup    bool
 	sessionManager   *SessionManager
 }
 
@@ -97,6 +98,10 @@ func (vp *VncProxy) newServerConnHandler(cfg *server.ServerConfig, sconn *server
 		target := session.Target
 		if session.TargetHostname != "" && session.TargetPort != "" {
 			target = session.TargetHostname + ":" + session.TargetPort
+		}
+
+		if vp.DynamicLookup {
+			target += "/" + sconn.SessionId + ".sock"
 		}
 
 		cconn, err := vp.createClientConnection(target, session.TargetPassword)
