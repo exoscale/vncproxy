@@ -18,7 +18,7 @@ func main() {
 	var targetVncPort = flag.String("targPort", "", "target vnc server port (deprecated, use -target)")
 	var targetVncHost = flag.String("targHost", "", "target vnc server host (deprecated, use -target)")
 	var targetVncPass = flag.String("targPass", "", "target vnc password")
-	var dynamicLookup = flag.Bool("dynamic-lookup", false, "lookup target UNIX socket path based on WebSocket URI")
+	var dynamicLookup = flag.Bool("dynamicLookup", false, "lookup target UNIX socket path based on WebSocket URI")
 	var logLevel = flag.String("logLevel", "info", "change logging level")
 
 	flag.Parse()
