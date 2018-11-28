@@ -20,8 +20,6 @@ func GetLogLevel(logLevel string) LogLevel {
 		return LogLevelWarn
 	case "error":
 		return LogLevelError
-	case "fatal":
-		return LogLevelFatal
 	}
 	return LogLevelInfo
 }
@@ -35,8 +33,6 @@ type Logger interface {
 	Warnf(format string, v ...interface{})
 	Error(v ...interface{})
 	Errorf(format string, v ...interface{})
-	Fatal(v ...interface{})
-	Fatalf(format string, v ...interface{})
 }
 type LogLevel int
 
@@ -45,7 +41,6 @@ const (
 	LogLevelInfo
 	LogLevelWarn
 	LogLevelError
-	LogLevelFatal
 )
 
 type SimpleLogger struct {
@@ -109,22 +104,6 @@ func (sl *SimpleLogger) Errorf(format string, v ...interface{}) {
 		fmt.Printf("[Error] "+format+"\n", v...)
 	}
 }
-func (sl *SimpleLogger) Fatal(v ...interface{}) {
-	if sl.level <= LogLevelFatal {
-		arr := []interface{}{"[Fatal]"}
-		for _, item := range v {
-			arr = append(arr, item)
-		}
-		fmt.Println(arr...)
-
-	}
-}
-func (sl *SimpleLogger) Fatalf(format string, v ...interface{}) {
-	if sl.level <= LogLevelFatal {
-		fmt.Printf("[Fatal] "+format+"\n", v)
-	}
-}
-
 func Debug(v ...interface{}) {
 	simpleLogger.Debug(v...)
 }
@@ -151,11 +130,4 @@ func Error(v ...interface{}) {
 }
 func Errorf(format string, v ...interface{}) {
 	simpleLogger.Errorf(format, v...)
-}
-
-func Fatal(v ...interface{}) {
-	simpleLogger.Fatal(v...)
-}
-func Fatalf(format string, v ...interface{}) {
-	simpleLogger.Fatalf(format, v...)
 }
