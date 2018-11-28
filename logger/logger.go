@@ -12,8 +12,6 @@ func SetLogLevel(logLevel string) {
 
 func GetLogLevel(logLevel string) LogLevel {
 	switch logLevel {
-	case "trace":
-		return LogLevelTrace
 	case "debug":
 		return LogLevelDebug
 	case "info":
@@ -43,8 +41,7 @@ type Logger interface {
 type LogLevel int
 
 const (
-	LogLevelTrace LogLevel = iota
-	LogLevelDebug
+	LogLevelDebug LogLevel = iota
 	LogLevelInfo
 	LogLevelWarn
 	LogLevelError
@@ -53,22 +50,6 @@ const (
 
 type SimpleLogger struct {
 	level LogLevel
-}
-
-func (sl *SimpleLogger) Trace(v ...interface{}) {
-	if sl.level <= LogLevelTrace {
-		arr := []interface{}{"[Trace]"}
-		for _, item := range v {
-			arr = append(arr, item)
-		}
-
-		fmt.Println(arr...)
-	}
-}
-func (sl *SimpleLogger) Tracef(format string, v ...interface{}) {
-	if sl.level <= LogLevelTrace {
-		fmt.Printf("[Trace] "+format+"\n", v...)
-	}
 }
 
 func (sl *SimpleLogger) Debug(v ...interface{}) {
@@ -149,13 +130,6 @@ func Debug(v ...interface{}) {
 }
 func Debugf(format string, v ...interface{}) {
 	simpleLogger.Debugf(format, v...)
-}
-
-func Trace(v ...interface{}) {
-	simpleLogger.Trace(v...)
-}
-func Tracef(format string, v ...interface{}) {
-	simpleLogger.Tracef(format, v...)
 }
 
 func Info(v ...interface{}) {
