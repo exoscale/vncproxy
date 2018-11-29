@@ -4,7 +4,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
-	"github.com/amitbet/vncproxy/logger"
+	"vncproxy/logger"
 
 	"golang.org/x/net/websocket"
 )

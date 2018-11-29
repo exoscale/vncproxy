@@ -5,7 +5,7 @@ import (
 	"encoding/binary"
 	"errors"
 	"io"
-	"github.com/amitbet/vncproxy/logger"
+	"vncproxy/logger"
 )
 
 var TightMinToCompress = 12

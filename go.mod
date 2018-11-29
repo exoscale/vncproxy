@@ -1,4 +1,4 @@
-module github.com/amitbet/vncproxy
+module vncproxy
 
 require (
 	github.com/go-stack/stack v1.8.0 // indirect

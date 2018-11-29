@@ -3,7 +3,7 @@ package encodings
 import (
 	"encoding/binary"
 	"io"
-	"github.com/amitbet/vncproxy/common"
+	"vncproxy/common"
 )
 
 type CoRREEncoding struct {

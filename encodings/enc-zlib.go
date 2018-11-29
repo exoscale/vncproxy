@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"io"
-	"github.com/amitbet/vncproxy/common"
+	"vncproxy/common"
 )
 
 type ZLibEncoding struct {

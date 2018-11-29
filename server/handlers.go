@@ -3,10 +3,10 @@ package server
 import (
 	"encoding/binary"
 	"fmt"
-	"github.com/amitbet/vncproxy/common"
+	"vncproxy/common"
 
 	"io"
-	"github.com/amitbet/vncproxy/logger"
+	"vncproxy/logger"
 )
 
 const ProtoVersionLength = 12

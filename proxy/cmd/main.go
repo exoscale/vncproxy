@@ -4,8 +4,8 @@ import (
 	"flag"
 	"os"
 
-	"github.com/amitbet/vncproxy/logger"
-	vncproxy "github.com/amitbet/vncproxy/proxy"
+	"vncproxy/logger"
+	vncproxy "vncproxy/proxy"
 )
 
 func main() {
