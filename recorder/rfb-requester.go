@@ -2,9 +2,9 @@ package recorder
 
 import (
 	"time"
-	"github.com/exoscale/vncproxy/client"
-	"github.com/exoscale/vncproxy/common"
-	"github.com/exoscale/vncproxy/logger"
+	"github.com/amitbet/vncproxy/client"
+	"github.com/amitbet/vncproxy/common"
+	"github.com/amitbet/vncproxy/logger"
 )
 
 type RfbRequester struct {

@@ -7,8 +7,8 @@ import (
 	"io"
 	"net"
 	"unicode"
-	"github.com/exoscale/vncproxy/common"
-	"github.com/exoscale/vncproxy/logger"
+	"github.com/amitbet/vncproxy/common"
+	"github.com/amitbet/vncproxy/logger"
 )
 
 // A ServerMessage implements a message sent from the server to the client.

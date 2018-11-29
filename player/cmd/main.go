@@ -4,11 +4,11 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"github.com/exoscale/vncproxy/common"
-	"github.com/exoscale/vncproxy/encodings"
-	"github.com/exoscale/vncproxy/logger"
-	"github.com/exoscale/vncproxy/player"
-	"github.com/exoscale/vncproxy/server"
+	"github.com/amitbet/vncproxy/common"
+	"github.com/amitbet/vncproxy/encodings"
+	"github.com/amitbet/vncproxy/logger"
+	"github.com/amitbet/vncproxy/player"
+	"github.com/amitbet/vncproxy/server"
 )
 
 func main() {

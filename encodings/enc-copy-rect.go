@@ -3,7 +3,7 @@ package encodings
 import (
 	"encoding/binary"
 	"io"
-	"github.com/exoscale/vncproxy/common"
+	"github.com/amitbet/vncproxy/common"
 )
 
 type CopyRectEncoding struct {
