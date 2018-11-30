@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/exoscale/vncproxy/logger"
-	vncproxy "github.com/exoscale/vncproxy/proxy"
+	"github.com/exoscale/vncproxy/proxy"
 )
 
 func main() {
@@ -50,18 +50,18 @@ func main() {
 		tcpUrl = ":" + string(*tcpPort)
 	}
 
-	proxy := &vncproxy.VncProxy{
+	vncProxy := &proxy.VncProxy{
 		WsListeningUrl:   "http://0.0.0.0:" + string(*wsPort) + "/", // empty = not listening on ws
 		TcpListeningUrl:  tcpUrl,
 		ProxyVncPassword: *vncPass, //empty = no auth
-		SingleSession: &vncproxy.VncSession{
+		SingleSession: &proxy.VncSession{
 			Target:         *targetVnc,
 			TargetHostname: *targetVncHost,
 			TargetPort:     *targetVncPort,
 			TargetPassword: *targetVncPass, //"vncPass",
 			ID:             "",
-			Status:         vncproxy.SessionStatusInit,
-			Type:           vncproxy.SessionTypeProxyPass,
+			Status:         proxy.SessionStatusInit,
+			Type:           proxy.SessionTypeProxyPass,
 		}, // to be used when not using sessions
 		DynamicLookup: *dynamicLookup,
 		UsingSessions: false, //false = single session - defined in the var above
@@ -69,9 +69,9 @@ func main() {
 
 	if *recordDir != "" {
 		logger.Warn("FBS recording is turned on")
-		proxy.RecordingDir = *recordDir
-		proxy.SingleSession.Type = vncproxy.SessionTypeRecordingProxy
+		vncProxy.RecordingDir = *recordDir
+		vncProxy.SingleSession.Type = proxy.SessionTypeRecordingProxy
 	}
 
-	proxy.StartListening()
+	vncProxy.StartListening()
 }
