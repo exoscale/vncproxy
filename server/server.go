@@ -3,9 +3,10 @@ package server
 import (
 	"fmt"
 	"io"
-	"log"
 	"net"
+
 	"github.com/exoscale/vncproxy/common"
+	"github.com/exoscale/vncproxy/logger"
 )
 
 var DefaultClientMessages = []common.ClientMessage{
@@ -46,7 +47,7 @@ type ServerConfig struct {
 func wsHandlerFunc(ws io.ReadWriter, cfg *ServerConfig, sessionId string) {
 	err := attachNewServerConn(ws, cfg, sessionId)
 	if err != nil {
-		log.Fatalf("Error attaching new connection. %v", err)
+		logger.Errorf("error attaching new connection: %s", err)
 	}
 }
 
@@ -59,7 +60,7 @@ func WsServe(url string, cfg *ServerConfig) error {
 func TcpServe(url string, cfg *ServerConfig) error {
 	ln, err := net.Listen("tcp", url)
 	if err != nil {
-		log.Fatalf("Error listen. %v", err)
+		logger.Errorf("error listening: %s", err)
 	}
 	for {
 		c, err := ln.Accept()
