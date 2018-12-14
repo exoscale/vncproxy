@@ -4,8 +4,8 @@ import (
 	"io"
 	"net/http"
 	"net/url"
-	"github.com/exoscale/vncproxy/logger"
 
+	"github.com/exoscale/vncproxy/logger"
 	"golang.org/x/net/websocket"
 )
 
@@ -16,7 +16,6 @@ type WsServer struct {
 type WsHandler func(io.ReadWriter, *ServerConfig, string)
 
 func (wsServer *WsServer) Listen(urlStr string, handlerFunc WsHandler) {
-
 	if urlStr == "" {
 		urlStr = "/"
 	}
@@ -32,6 +31,8 @@ func (wsServer *WsServer) Listen(urlStr string, handlerFunc WsHandler) {
 			if path != "" {
 				sessionId = path[1:]
 			}
+
+			logger.Debugf("incoming WS request for %s from %s", path, ws.Request().RemoteAddr)
 
 			ws.PayloadType = websocket.BinaryFrame
 			handlerFunc(ws, wsServer.cfg, sessionId)
