@@ -124,7 +124,8 @@ func NewExtendedLogger(l log15.Logger) *ExtendedLogger {
 
 func (el *ExtendedLogger) SetLogLevel(logLevel string) {
 	level, _ := log15.LvlFromString(logLevel) // Falls back to level 'debug' in case of error
-	el.logger.SetHandler(log15.LvlFilterHandler(level, log15.StdoutHandler))
+	el.logger.SetHandler(log15.LvlFilterHandler(level, el.logger.GetHandler()))
+
 }
 func (el *ExtendedLogger) Debug(v ...interface{}) {
 	el.logger.Debug(fmt.Sprint(v...))
