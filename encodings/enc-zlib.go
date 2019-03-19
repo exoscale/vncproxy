@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"io"
+
 	"github.com/exoscale/vncproxy/common"
 )
 
@@ -18,9 +19,6 @@ func (z *ZLibEncoding) WriteTo(w io.Writer) (n int, err error) {
 	return w.Write(z.bytes)
 }
 func (z *ZLibEncoding) Read(pixelFmt *common.PixelFormat, rect *common.Rectangle, r *common.RfbReadHelper) (common.IEncoding, error) {
-	//conn := common.RfbReadHelper{Reader:r}
-	//conn := &DataSource{conn: conn.c, PixelFormat: conn.PixelFormat}
-	//bytesPerPixel := c.PixelFormat.BPP / 8
 	bytes := &bytes.Buffer{}
 	len, err := r.ReadUint32()
 	if err != nil {

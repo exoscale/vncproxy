@@ -5,16 +5,15 @@ import (
 	"encoding/binary"
 	"os"
 	"time"
+
 	"github.com/exoscale/vncproxy/common"
 	"github.com/exoscale/vncproxy/logger"
 	"github.com/exoscale/vncproxy/server"
 )
 
 type Recorder struct {
-	//common.BytesListener
-	RBSFileName string
-	writer      *os.File
-	//logger              common.Logger
+	RBSFileName         string
+	writer              *os.File
 	startTime           int
 	buffer              bytes.Buffer
 	serverInitMessage   *common.ServerInit
@@ -68,12 +67,6 @@ const (
 	SecTypeTight   = 16
 )
 
-// func (r *Recorder) writeHeader() error {
-// 	_, err := r.writer.WriteString("FBS 001.000\n")
-// 	return err
-// 	// df.write("FBS 001.000\n".getBytes());
-// }
-
 func (r *Recorder) writeStartSession(initMsg *common.ServerInit) error {
 	r.sessionStartWritten = true
 	desktopName := string(initMsg.NameText)
@@ -92,20 +85,13 @@ func (r *Recorder) writeStartSession(initMsg *common.ServerInit) error {
 	binary.Write(&r.buffer, binary.BigEndian, int16(framebufferHeight))
 
 	buff := bytes.Buffer{}
-	//binary.Write(&buff, binary.BigEndian, initMsg.FBWidth)
-	//binary.Write(&buff, binary.BigEndian, initMsg.FBHeight)
 	binary.Write(&buff, binary.BigEndian, initMsg.PixelFormat)
 	buff.Write([]byte{0, 0, 0}) //padding
 	r.buffer.Write(buff.Bytes())
-	//logger.Debugf(">>>>>>buffer for initMessage:%v ", buff.Bytes())
-
-	//var fbsServerInitMsg = []byte{32, 24, 0, 1, 0, byte(0xFF), 0, byte(0xFF), 0, byte(0xFF), 16, 8, 0, 0, 0, 0}
-	//r.buffer.Write(fbsServerInitMsg)
 
 	binary.Write(&r.buffer, binary.BigEndian, uint32(len(desktopName)))
 
 	r.buffer.WriteString(desktopName)
-	//binary.Write(&r.buffer, binary.BigEndian, byte(0)) // add null termination for desktop string
 
 	return nil
 }
@@ -114,8 +100,6 @@ func (r *Recorder) Consume(data *common.RfbSegment) error {
 	//using async writes so if chan buffer overflows, proxy will not be affected
 	select {
 	case r.segmentChan <- data:
-		// default:
-		// 	logger.Error("error: recorder queue is full")
 	}
 
 	return nil
@@ -131,14 +115,11 @@ func (r *Recorder) HandleRfbSegment(data *common.RfbSegment) error {
 	switch data.SegmentType {
 	case common.SegmentMessageStart:
 		if !r.sessionStartWritten {
-			logger.Debugf("Recorder.HandleRfbSegment: writing start session segment: %v", r.serverInitMessage)
 			r.writeStartSession(r.serverInitMessage)
 		}
 
 		switch common.ServerMessageType(data.UpcomingObjectType) {
 		case common.FramebufferUpdate:
-			logger.Debugf("Recorder.HandleRfbSegment: saving FramebufferUpdate segment")
-			//r.writeToDisk()
 		case common.SetColourMapEntries:
 		case common.Bell:
 		case common.ServerCutText:
@@ -148,10 +129,7 @@ func (r *Recorder) HandleRfbSegment(data *common.RfbSegment) error {
 	case common.SegmentConnectionClosed:
 		r.writeToDisk()
 	case common.SegmentRectSeparator:
-		logger.Debugf("Recorder.HandleRfbSegment: writing rect")
-		//r.writeToDisk()
 	case common.SegmentBytes:
-		logger.Debug("Recorder.HandleRfbSegment: writing bytes, len:", len(data.Bytes))
 		if r.buffer.Len()+len(data.Bytes) > r.maxWriteSize-4 {
 			r.writeToDisk()
 		}
@@ -165,14 +143,11 @@ func (r *Recorder) HandleRfbSegment(data *common.RfbSegment) error {
 		switch clientMsg.Type() {
 		case common.SetPixelFormatMsgType:
 			clientMsg := data.Message.(*server.MsgSetPixelFormat)
-			logger.Debugf("Recorder.HandleRfbSegment: client message %v", *clientMsg)
 			r.serverInitMessage.PixelFormat = clientMsg.PF
 		default:
-			//return errors.New("unknown client message type:" + string(data.UpcomingObjectType))
 		}
 
 	default:
-		//return errors.New("undefined RfbSegment type")
 	}
 	return nil
 }
@@ -189,11 +164,9 @@ func (r *Recorder) writeToDisk() error {
 	paddedSize := (bytesLen + 3) & 0x7FFFFFFC
 	paddingSize := paddedSize - bytesLen
 
-	//logger.Debugf("paddedSize=%d paddingSize=%d bytesLen=%d", paddedSize, paddingSize, bytesLen)
 	//write buffer padded to 32bit
 	_, err := r.buffer.WriteTo(r.writer)
 	padding := make([]byte, paddingSize)
-	//logger.Debugf("padding=%v ", padding)
 
 	binary.Write(r.writer, binary.BigEndian, padding)
 
@@ -202,12 +175,6 @@ func (r *Recorder) writeToDisk() error {
 	r.buffer.Reset()
 	return err
 }
-
-// func (r *Recorder) WriteUInt8(data uint8) error {
-// 	buf := make([]byte, 1)
-// 	buf[0] = byte(data) // cast int8 to byte
-// 	return r.Write(buf)
-// }
 
 func (r *Recorder) Close() {
 	r.writer.Close()

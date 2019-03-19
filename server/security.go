@@ -6,6 +6,7 @@ import (
 	"crypto/rand"
 	"errors"
 	"log"
+
 	"github.com/exoscale/vncproxy/common"
 )
 
@@ -52,20 +53,6 @@ type SecurityHandler interface {
 	Auth(common.IServerConn) error
 }
 
-// type ClientAuthNone struct{}
-
-// func (*ClientAuthNone) Type() SecurityType {
-// 	return SecTypeNone
-// }
-
-// func (*ClientAuthNone) SubType() SecuritySubType {
-// 	return SecSubTypeUnknown
-// }
-
-// func (*ClientAuthNone) Auth(conn common.IServerConn) error {
-// 	return nil
-// }
-
 // ServerAuthNone is the "none" authentication. See 7.2.1.
 type ServerAuthNone struct{}
 
@@ -80,108 +67,6 @@ func (*ServerAuthNone) Auth(c common.IServerConn) error {
 func (*ServerAuthNone) SubType() SecuritySubType {
 	return SecSubTypeUnknown
 }
-
-// func (*ClientAuthVeNCrypt02Plain) Type() SecurityType {
-// 	return SecTypeVeNCrypt
-// }
-
-// func (*ClientAuthVeNCrypt02Plain) SubType() SecuritySubType {
-// 	return SecSubTypeVeNCrypt02Plain
-// }
-
-// // ClientAuthVeNCryptPlain see https://www.berrange.com/~dan/vencrypt.txt
-// type ClientAuthVeNCrypt02Plain struct {
-// 	Username []byte
-// 	Password []byte
-// }
-
-// func (auth *ClientAuthVeNCrypt02Plain) Auth(c common.IServerConn) error {
-// 	if err := binary.Write(c, binary.BigEndian, []uint8{0, 2}); err != nil {
-// 		return err
-// 	}
-// 	if err := c.Flush(); err != nil {
-// 		return err
-// 	}
-// 	var (
-// 		major, minor uint8
-// 	)
-
-// 	if err := binary.Read(c, binary.BigEndian, &major); err != nil {
-// 		return err
-// 	}
-// 	if err := binary.Read(c, binary.BigEndian, &minor); err != nil {
-// 		return err
-// 	}
-// 	res := uint8(1)
-// 	if major == 0 && minor == 2 {
-// 		res = uint8(0)
-// 	}
-// 	if err := binary.Write(c, binary.BigEndian, res); err != nil {
-// 		return err
-// 	}
-// 	c.Flush()
-// 	if err := binary.Write(c, binary.BigEndian, uint8(1)); err != nil {
-// 		return err
-// 	}
-// 	if err := binary.Write(c, binary.BigEndian, auth.SubType()); err != nil {
-// 		return err
-// 	}
-// 	if err := c.Flush(); err != nil {
-// 		return err
-// 	}
-// 	var secType SecuritySubType
-// 	if err := binary.Read(c, binary.BigEndian, &secType); err != nil {
-// 		return err
-// 	}
-// 	if secType != auth.SubType() {
-// 		binary.Write(c, binary.BigEndian, uint8(1))
-// 		c.Flush()
-// 		return fmt.Errorf("invalid sectype")
-// 	}
-// 	if len(auth.Password) == 0 || len(auth.Username) == 0 {
-// 		return fmt.Errorf("Security Handshake failed; no username and/or password provided for VeNCryptAuth.")
-// 	}
-// 	/*
-// 		if err := binary.Write(c, binary.BigEndian, uint32(len(auth.Username))); err != nil {
-// 			return err
-// 		}
-
-// 		if err := binary.Write(c, binary.BigEndian, uint32(len(auth.Password))); err != nil {
-// 			return err
-// 		}
-
-// 		if err := binary.Write(c, binary.BigEndian, auth.Username); err != nil {
-// 			return err
-// 		}
-
-// 		if err := binary.Write(c, binary.BigEndian, auth.Password); err != nil {
-// 			return err
-// 		}
-// 	*/
-// 	var (
-// 		uLength, pLength uint32
-// 	)
-// 	if err := binary.Read(c, binary.BigEndian, &uLength); err != nil {
-// 		return err
-// 	}
-// 	if err := binary.Read(c, binary.BigEndian, &pLength); err != nil {
-// 		return err
-// 	}
-
-// 	username := make([]byte, uLength)
-// 	password := make([]byte, pLength)
-// 	if err := binary.Read(c, binary.BigEndian, &username); err != nil {
-// 		return err
-// 	}
-
-// 	if err := binary.Read(c, binary.BigEndian, &password); err != nil {
-// 		return err
-// 	}
-// 	if !bytes.Equal(auth.Username, username) || !bytes.Equal(auth.Password, password) {
-// 		return fmt.Errorf("invalid username/password")
-// 	}
-// 	return nil
-// }
 
 // ServerAuthVNC is the standard password authentication. See 7.2.2.
 type ServerAuthVNC struct {
@@ -210,7 +95,6 @@ func (auth *ServerAuthVNC) Auth(c common.IServerConn) error {
 		log.Printf("The full 16 byte challenge was not sent!\n")
 		return errors.New("The full 16 byte challenge was not sent")
 	}
-	//c.Flush()
 	buf2 := make([]byte, 16)
 	_, err = c.Read(buf2)
 	if err != nil {
@@ -231,7 +115,6 @@ func (auth *ServerAuthVNC) Auth(c common.IServerConn) error {
 		SetUint32(buf, 4, uint32(len([]byte(AUTH_FAIL))))
 		copy(buf[8:], []byte(AUTH_FAIL))
 		c.Write(buf)
-		//c.Flush()
 		return errors.New("Authentication failed")
 	}
 	return nil
@@ -276,60 +159,3 @@ func fixDesKey(key string) []byte {
 	}
 	return buf
 }
-
-// // ClientAuthVNC is the standard password authentication. See 7.2.2.
-// type ClientAuthVNC struct {
-// 	Challenge [16]byte
-// 	Password  []byte
-// }
-
-// func (*ClientAuthVNC) Type() SecurityType {
-// 	return SecTypeVNC
-// }
-// func (*ClientAuthVNC) SubType() SecuritySubType {
-// 	return SecSubTypeUnknown
-// }
-
-// func (auth *ClientAuthVNC) Auth(c common.IServerConn) error {
-// 	if len(auth.Password) == 0 {
-// 		return fmt.Errorf("Security Handshake failed; no password provided for VNCAuth.")
-// 	}
-
-// 	if err := binary.Read(c, binary.BigEndian, auth.Challenge); err != nil {
-// 		return err
-// 	}
-
-// 	auth.encode()
-
-// 	// Send the encrypted challenge back to server
-// 	if err := binary.Write(c, binary.BigEndian, auth.Challenge); err != nil {
-// 		return err
-// 	}
-
-// 	return c.Flush()
-// }
-
-// func (auth *ClientAuthVNC) encode() error {
-// 	// Copy password string to 8 byte 0-padded slice
-// 	key := make([]byte, 8)
-// 	copy(key, auth.Password)
-
-// 	// Each byte of the password needs to be reversed. This is a
-// 	// non RFC-documented behaviour of VNC clients and servers
-// 	for i := range key {
-// 		key[i] = (key[i]&0x55)<<1 | (key[i]&0xAA)>>1 // Swap adjacent bits
-// 		key[i] = (key[i]&0x33)<<2 | (key[i]&0xCC)>>2 // Swap adjacent pairs
-// 		key[i] = (key[i]&0x0F)<<4 | (key[i]&0xF0)>>4 // Swap the 2 halves
-// 	}
-
-// 	// Encrypt challenge with key.
-// 	cipher, err := des.NewCipher(key)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	for i := 0; i < len(auth.Challenge); i += cipher.BlockSize() {
-// 		cipher.Encrypt(auth.Challenge[i:i+cipher.BlockSize()], auth.Challenge[i:i+cipher.BlockSize()])
-// 	}
-
-// 	return nil
-// }

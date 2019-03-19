@@ -7,6 +7,7 @@ import (
 	"io"
 	"net"
 	"unicode"
+
 	"github.com/exoscale/vncproxy/common"
 	"github.com/exoscale/vncproxy/logger"
 )
@@ -27,7 +28,6 @@ type ClientAuth interface {
 type ClientConn struct {
 	conn io.ReadWriteCloser
 
-	//c      net.IServerConn
 	config *ClientConfig
 
 	// If the pixel format uses a color map, then this is the color
@@ -115,10 +115,6 @@ func (c *ClientConn) Write(bytes []byte) (n int, err error) {
 func (c *ClientConn) Read(bytes []byte) (n int, err error) {
 	return c.conn.Read(bytes)
 }
-
-// func (c *ClientConn) CurrentColorMap() *common.ColorMap {
-// 	return &c.ColorMap
-// }
 
 // CutText tells the server that the client has new text in its cut buffer.
 // The text string MUST only contain Latin-1 characters. This encoding
@@ -506,16 +502,15 @@ func (c *ClientConn) mainLoop() {
 			// Unsupported message type! Bad!
 			break
 		}
-		logger.Debugf("ClientConn.MainLoop: got ServerMessage:%s", common.ServerMessageType(messageType))
+
 		reader.SendMessageStart(common.ServerMessageType(messageType))
 		reader.PublishBytes([]byte{byte(messageType)})
 
-		parsedMsg, err := msg.Read(c, reader)
+		_, err := msg.Read(c, reader)
 		if err != nil {
 			logger.Errorf("ClientConn.MainLoop: error parsing message, %s", err)
 			break
 		}
-		logger.Debugf("ClientConn.MainLoop: read & parsed ServerMessage:%d, %s", parsedMsg.Type(), parsedMsg)
 	}
 }
 

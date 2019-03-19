@@ -2,10 +2,10 @@ package client
 
 import (
 	"encoding/binary"
-	"encoding/json"
 	"fmt"
 	"io"
 	"strings"
+
 	"github.com/exoscale/vncproxy/common"
 	"github.com/exoscale/vncproxy/encodings"
 	"github.com/exoscale/vncproxy/logger"
@@ -63,12 +63,9 @@ func (fbm *MsgFramebufferUpdate) Read(c common.IClientConn, r *common.RfbReadHel
 	// We must always support the raw encoding
 	rawEnc := new(encodings.RawEncoding)
 	encMap[rawEnc.Type()] = rawEnc
-	logger.Debugf("MsgFramebufferUpdate.Read: numrects= %d", numRects)
 
 	rects := make([]common.Rectangle, numRects)
 	for i := uint16(0); i < numRects; i++ {
-		logger.Debugf("MsgFramebufferUpdate.Read: ###############rect################: %d", i)
-
 		var encodingTypeInt int32
 		r.SendRectSeparator(-1)
 		rect := &rects[i]
@@ -86,11 +83,9 @@ func (fbm *MsgFramebufferUpdate) Read(c common.IClientConn, r *common.RfbReadHel
 				return nil, err
 			}
 		}
-		jBytes, _ := json.Marshal(data)
 
 		encType := common.EncodingType(encodingTypeInt)
 
-		logger.Debugf("MsgFramebufferUpdate.Read: rect# %d, rect hdr data: enctype=%s, data: %s", i, encType, string(jBytes))
 		enc, supported := encMap[encodingTypeInt]
 		if supported {
 			var err error
@@ -175,9 +170,6 @@ func (m *MsgSetColorMapEntries) Read(c common.IClientConn, r *common.RfbReadHelp
 				return nil, err
 			}
 		}
-		// cmap := c.CurrentColorMap()
-		// // Update the connection's color map
-		// cmap[result.FirstColor+i] = *color
 	}
 	r.SendMessageEnd(common.ServerMessageType(m.Type()))
 	return &result, nil
@@ -264,8 +256,6 @@ func (*MsgServerCutText) Type() uint8 {
 }
 
 func (m *MsgServerCutText) Read(conn common.IClientConn, r *common.RfbReadHelper) (common.ServerMessage, error) {
-	//reader := common.RfbReadHelper{Reader: r}
-
 	// Read off the padding
 	var padding [3]byte
 	if _, err := io.ReadFull(r, padding[:]); err != nil {

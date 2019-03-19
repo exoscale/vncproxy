@@ -3,6 +3,7 @@ package encodings
 import (
 	"io"
 	"math"
+
 	"github.com/exoscale/vncproxy/common"
 )
 

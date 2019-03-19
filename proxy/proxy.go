@@ -5,6 +5,7 @@ import (
 	"path"
 	"strconv"
 	"time"
+
 	"github.com/exoscale/vncproxy/client"
 	"github.com/exoscale/vncproxy/common"
 	"github.com/exoscale/vncproxy/encodings"

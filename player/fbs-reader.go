@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"io"
 	"os"
+
 	"github.com/exoscale/vncproxy/common"
 	"github.com/exoscale/vncproxy/encodings"
 	"github.com/exoscale/vncproxy/logger"
@@ -38,7 +39,6 @@ func (fbs *FbsReader) Read(p []byte) (n int, err error) {
 
 func (fbs *FbsReader) CurrentPixelFormat() *common.PixelFormat { return fbs.pixelFormat }
 
-//func (fbs *FbsReader) CurrentColorMap() *common.ColorMap       { return &common.ColorMap{} }
 func (fbs *FbsReader) Encodings() []common.IEncoding { return fbs.encodings }
 
 func NewFbsReader(fbsFile string) (*FbsReader, error) {
@@ -179,7 +179,6 @@ func (fbs *FbsReader) ReadSegment() (*FbsSegment, error) {
 		return nil, err
 	}
 
-	//timeStamp := time.Unix(timeSinceStart, 0)
 	seg := &FbsSegment{bytes: actualBytes, timestamp: timeSinceStart}
 	return seg, nil
 }

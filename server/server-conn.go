@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"sync"
+
 	"github.com/exoscale/vncproxy/common"
 	"github.com/exoscale/vncproxy/logger"
 )
@@ -46,23 +47,13 @@ type ServerConn struct {
 	quit chan struct{}
 }
 
-// func (c *IServerConn) UnreadByte() error {
-// 	return c.br.UnreadByte()
-// }
-
 func NewServerConn(c io.ReadWriter, cfg *ServerConfig, sessionId string) (*ServerConn, error) {
-	// if cfg.ClientMessageCh == nil {
-	// 	return nil, fmt.Errorf("ClientMessageCh nil")
-	// }
-
 	if len(cfg.ClientMessages) == 0 {
 		return nil, fmt.Errorf("ClientMessage 0")
 	}
 
 	return &ServerConn{
-		c: c,
-		//br:          bufio.NewReader(c),
-		//bw:          bufio.NewWriter(c),
+		c:           c,
 		cfg:         cfg,
 		quit:        make(chan struct{}),
 		encodings:   cfg.Encodings,
@@ -104,8 +95,6 @@ func (c *ServerConn) Read(buf []byte) (int, error) {
 }
 
 func (c *ServerConn) Write(buf []byte) (int, error) {
-	//	c.m.Lock()
-	//	defer c.m.Unlock()
 	return c.c.Write(buf)
 }
 
@@ -172,37 +161,26 @@ func (c *ServerConn) handle() error {
 				logger.Errorf("ServerConn.handle error: %v", err)
 				return err
 			}
-			logger.Debugf("ServerConn.handle: got messagetype, %d", messageType)
 			msg, ok := clientMessages[messageType]
-			logger.Debugf("ServerConn.handle: found message type, %v", ok)
 			if !ok {
 				logger.Errorf("ServerConn.handle: unsupported message-type: %v", messageType)
 			}
 			parsedMsg, err := msg.Read(c)
-			logger.Debugf("ServerConn.handle: got parsed messagetype, %v", parsedMsg)
 			//update connection for pixel format / color map changes
 			switch parsedMsg.Type() {
 			case common.SetPixelFormatMsgType:
 				// update pixel format
-				logger.Debugf("ClientUpdater.Consume: updating pixel format")
 				pixFmtMsg := parsedMsg.(*MsgSetPixelFormat)
 				c.SetPixelFormat(&pixFmtMsg.PF)
 				if pixFmtMsg.PF.TrueColor != 0 {
 					c.SetColorMap(&common.ColorMap{})
 				}
 			}
-			////////
 
 			if err != nil {
 				logger.Errorf("srv err %s", err.Error())
 				return err
 			}
-
-			logger.Debugf("IServerConn.Handle got ClientMessage: %s, %v", parsedMsg.Type(), parsedMsg)
-			//TODO: treat set encodings by allowing only supported encoding in proxy configurations
-			//// if parsedMsg.Type() == common.SetEncodingsMsgType{
-			//// 	c.cfg.Encodings
-			//// }
 
 			seg := &common.RfbSegment{
 				SegmentType: common.SegmentFullyParsedClientMessage,

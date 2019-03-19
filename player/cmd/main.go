@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+
 	"github.com/exoscale/vncproxy/common"
 	"github.com/exoscale/vncproxy/encodings"
 	"github.com/exoscale/vncproxy/logger"
@@ -36,9 +37,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	//chServer := make(chan common.ClientMessage)
-	//chClient := make(chan common.ServerMessage)
-
 	encs := []common.IEncoding{
 		&encodings.RawEncoding{},
 		&encodings.TightEncoding{},
@@ -53,7 +51,6 @@ func main() {
 	}
 
 	cfg := &server.ServerConfig{
-		//SecurityHandlers: []SecurityHandler{&ServerAuthNone{}, &ServerAuthVNC{}},
 		SecurityHandlers: []server.SecurityHandler{&server.ServerAuthNone{}},
 		Encodings:        encs,
 		PixelFormat:      common.NewPixelFormat(32),
@@ -64,8 +61,6 @@ func main() {
 	}
 
 	cfg.NewConnHandler = func(cfg *server.ServerConfig, conn *server.ServerConn) error {
-		//fbs, err := loadFbsFile("/Users/amitbet/Dropbox/recording.rbs", conn)
-		//fbs, err := loadFbsFile("/Users/amitbet/vncRec/recording.rbs", conn)
 		fbs, err := player.ConnectFbsFile(*fbsFile, conn)
 
 		if err != nil {

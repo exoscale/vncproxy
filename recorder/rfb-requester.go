@@ -2,9 +2,9 @@ package recorder
 
 import (
 	"time"
+
 	"github.com/exoscale/vncproxy/client"
 	"github.com/exoscale/vncproxy/common"
-	"github.com/exoscale/vncproxy/logger"
 )
 
 type RfbRequester struct {
@@ -16,8 +16,6 @@ type RfbRequester struct {
 }
 
 func (p *RfbRequester) Consume(seg *common.RfbSegment) error {
-
-	logger.Debugf("WriteTo.Consume ("+p.Name+"): got segment type=%s", seg.SegmentType)
 	switch seg.SegmentType {
 	case common.SegmentServerInitMessage:
 		serverInitMessage := seg.Message.(*common.ServerInit)
@@ -35,12 +33,7 @@ func (p *RfbRequester) Consume(seg *common.RfbSegment) error {
 	case common.SegmentBytes:
 	case common.SegmentFullyParsedClientMessage:
 	case common.SegmentMessageEnd:
-		// minTimeBetweenReq := 300 * time.Millisecond
-		// timeForNextReq := p.lastRequestTime.Unix() + minTimeBetweenReq.Nanoseconds()/1000
-		// if seg.UpcomingObjectType == int(common.FramebufferUpdate) && time.Now().Unix() > timeForNextReq {
-		//time.Sleep(300 * time.Millisecond)
 		p.Conn.FramebufferUpdateRequest(true, 0, 0, p.Width, p.Height)
-		//}
 	default:
 	}
 	return nil

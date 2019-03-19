@@ -3,6 +3,7 @@ package server
 import (
 	"log"
 	"testing"
+
 	"github.com/exoscale/vncproxy/common"
 	"github.com/exoscale/vncproxy/encodings"
 )
@@ -13,12 +14,9 @@ func newServerConnHandler(cfg *ServerConfig, conn *ServerConn) error {
 }
 
 func TestServer(t *testing.T) {
-
-	//chServer := make(chan common.ClientMessage)
 	chClient := make(chan common.ServerMessage)
 
 	cfg := &ServerConfig{
-		//SecurityHandlers: []SecurityHandler{&ServerAuthNone{}, &ServerAuthVNC{}},
 		SecurityHandlers: []SecurityHandler{&ServerAuthVNC{"Ch_#!T@8"}},
 		Encodings:        []common.IEncoding{&encodings.RawEncoding{}, &encodings.TightEncoding{}, &encodings.CopyRectEncoding{}},
 		PixelFormat:      common.NewPixelFormat(32),
