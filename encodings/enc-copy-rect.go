@@ -3,11 +3,11 @@ package encodings
 import (
 	"encoding/binary"
 	"io"
+
 	"github.com/exoscale/vncproxy/common"
 )
 
 type CopyRectEncoding struct {
-	//Colors       []Color
 	copyRectSrcX uint16
 	copyRectSrcY uint16
 }
@@ -32,5 +32,3 @@ func (z *CopyRectEncoding) Read(pixelFmt *common.PixelFormat, rect *common.Recta
 	z.copyRectSrcY, _ = r.ReadUint16()
 	return z, nil
 }
-
-//////////

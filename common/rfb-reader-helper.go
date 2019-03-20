@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"errors"
 	"io"
+
 	"github.com/exoscale/vncproxy/logger"
 )
 
@@ -101,8 +102,6 @@ func (r *RfbReadHelper) PublishBytes(p []byte) error {
 	return r.Listeners.Consume(seg)
 }
 
-//var prevlen int
-
 func (r *RfbReadHelper) Read(p []byte) (n int, err error) {
 	readLen, err := r.Reader.Read(p)
 	if err != nil {
@@ -115,15 +114,6 @@ func (r *RfbReadHelper) Read(p []byte) (n int, err error) {
 			logger.Warn("RfbReadHelper.Read: failed to collect bytes in mem buffer:", err)
 		}
 	}
-	/////////
-	// modLen := (prevlen % 10000)
-	// if len(p) == modLen && modLen != prevlen {
-	// 	logger.Warn("RFBReadHelper debug!! plen=", prevlen, " len=", len(p))
-	// }
-	// prevlen = len(p)
-	/////////
-
-	logger.Debugf("RfbReadHelper.Read: publishing bytes, bytes:%v", p[:readLen])
 
 	//write the bytes to the Listener for further processing
 	seg := &RfbSegment{Bytes: p[:readLen], SegmentType: SegmentBytes}
@@ -140,17 +130,13 @@ func (r *RfbReadHelper) ReadBytes(count int) ([]byte, error) {
 
 	lengthRead, err := io.ReadFull(r, buff)
 
-	//lengthRead, err := r.Read(buff)
 	if lengthRead != count {
 		logger.Errorf("RfbReadHelper.ReadBytes unable to read bytes: lengthRead=%d, countExpected=%d", lengthRead, count)
 		return nil, errors.New("RfbReadHelper.ReadBytes unable to read bytes")
 	}
 
-	//err := binary.Read(r, binary.BigEndian, &buff)
-
 	if err != nil {
 		logger.Errorf("RfbReadHelper.ReadBytes error while reading bytes: ", err)
-		//if err := binary.Read(d.conn, binary.BigEndian, &buff); err != nil {
 		return nil, err
 	}
 
@@ -184,22 +170,15 @@ func (r *RfbReadHelper) ReadUint32() (uint32, error) {
 func (r *RfbReadHelper) ReadCompactLen() (int, error) {
 	var err error
 	part, err := r.ReadUint8()
-	//byteCount := 1
 	len := uint32(part & 0x7F)
 	if (part & 0x80) != 0 {
 		part, err = r.ReadUint8()
-		//byteCount++
 		len |= uint32(part&0x7F) << 7
 		if (part & 0x80) != 0 {
 			part, err = r.ReadUint8()
-			//byteCount++
 			len |= uint32(part&0xFF) << 14
 		}
 	}
-
-	//   for  i := 0; i < byteCount; i++{
-	//     rec.writeByte(portion[i]);
-	//   }
 
 	return int(len), err
 }
@@ -208,8 +187,8 @@ func (r *RfbReadHelper) ReadTightData(dataSize int) ([]byte, error) {
 	if int(dataSize) < TightMinToCompress {
 		return r.ReadBytes(int(dataSize))
 	}
+
 	zlibDataLen, err := r.ReadCompactLen()
-	logger.Debugf("RfbReadHelper.ReadTightData: compactlen=%d", zlibDataLen)
 	if err != nil {
 		return nil, err
 	}

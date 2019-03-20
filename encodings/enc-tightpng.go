@@ -3,6 +3,7 @@ package encodings
 import (
 	"fmt"
 	"io"
+
 	"github.com/exoscale/vncproxy/common"
 	"github.com/exoscale/vncproxy/logger"
 )
@@ -24,18 +25,15 @@ func (t *TightPngEncoding) Read(pixelFmt *common.PixelFormat, rect *common.Recta
 		t.bytes = r.EndByteCollection()
 	}()
 
-	//var subencoding uint8
 	compctl, err := r.ReadUint8()
 	if err != nil {
 		logger.Errorf("error in handling tight encoding: %v", err)
 		return nil, err
 	}
-	logger.Debugf("bytesPixel= %d, subencoding= %d", bytesPixel, compctl)
 
 	//move it to position (remove zlib flush commands)
 	compType := compctl >> 4 & 0x0F
 
-	logger.Debugf("afterSHL:%d", compType)
 	switch compType {
 	case TightPNG:
 		len, err := r.ReadCompactLen()
@@ -47,6 +45,7 @@ func (t *TightPngEncoding) Read(pixelFmt *common.PixelFormat, rect *common.Recta
 
 	case TightFill:
 		r.ReadBytes(int(bytesPixel))
+
 	default:
 		return nil, fmt.Errorf("unknown tight compression %d", compType)
 	}

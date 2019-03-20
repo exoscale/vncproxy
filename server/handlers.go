@@ -3,10 +3,9 @@ package server
 import (
 	"encoding/binary"
 	"fmt"
-	"github.com/exoscale/vncproxy/common"
-
 	"io"
-	"github.com/exoscale/vncproxy/logger"
+
+	"github.com/exoscale/vncproxy/common"
 )
 
 const ProtoVersionLength = 12
@@ -40,9 +39,6 @@ func ServerVersionHandler(cfg *ServerConfig, c *ServerConn) error {
 	if err := binary.Write(c, binary.BigEndian, []byte(ProtoVersion38)); err != nil {
 		return err
 	}
-	// if err := c.Flush(); err != nil {
-	// 	return err
-	// }
 	if err := binary.Read(c, binary.BigEndian, &version); err != nil {
 		return err
 	}
@@ -79,10 +75,6 @@ func ServerSecurityHandler(cfg *ServerConfig, c *ServerConn) error {
 		}
 	}
 
-	// if err := c.Flush(); err != nil {
-	// 	return err
-	// }
-
 	var secType SecurityType
 	if err := binary.Read(c, binary.BigEndian, &secType); err != nil {
 		return err
@@ -107,9 +99,6 @@ func ServerSecurityHandler(cfg *ServerConfig, c *ServerConn) error {
 	if err := binary.Write(c, binary.BigEndian, authCode); err != nil {
 		return err
 	}
-	// if err := c.Flush(); err != nil {
-	// 	return err
-	// }
 
 	if authErr != nil {
 		if err := binary.Write(c, binary.BigEndian, len(authErr.Error())); err != nil {
@@ -118,9 +107,6 @@ func ServerSecurityHandler(cfg *ServerConfig, c *ServerConn) error {
 		if err := binary.Write(c, binary.BigEndian, []byte(authErr.Error())); err != nil {
 			return err
 		}
-		// if err := c.Flush(); err != nil {
-		// 	return err
-		// }
 		return authErr
 	}
 
@@ -135,7 +121,6 @@ func ServerServerInitHandler(cfg *ServerConfig, c *ServerConn) error {
 		NameLength:  uint32(len(cfg.DesktopName)),
 		NameText:    []byte(cfg.DesktopName),
 	}
-	logger.Debugf("Server.ServerServerInitHandler initMessage: %v", srvInit)
 	if err := binary.Write(c, binary.BigEndian, srvInit.FBWidth); err != nil {
 		return err
 	}
@@ -153,21 +138,6 @@ func ServerServerInitHandler(cfg *ServerConfig, c *ServerConn) error {
 	if err := binary.Write(c, binary.BigEndian, srvInit.NameText); err != nil {
 		return err
 	}
-	//
-	//serverCaps:=[]TightCapability{
-	//	TightCapability{uint32(1), [4]byte(StandardVendor), [8]byte("12345678")},
-	//}
-	//clientCaps:=[]TightCapability{
-	//	TightCapability{uint32(1), [4]byte(StandardVendor), [8]byte("12345678")},
-	//}
-	//encodingCaps:=[]TightCapability{
-	//	TightCapability{uint32(1), [4]byte(StandardVendor), [8]byte("12345678")},
-	//}
-	//
-	//tightInit:=TightServerInit{
-	//	serverCaps,clientCaps,encodingCaps,
-	//}
-	//tightInit.WriteTo(c)
 
 	return nil
 }
@@ -178,59 +148,6 @@ const (
 	TightVncVendor  = "TGHT"
 )
 
-/*
-  void initCapabilities() {
-    tunnelCaps    = new CapsContainer();
-    authCaps      = new CapsContainer();
-    serverMsgCaps = new CapsContainer();
-    clientMsgCaps = new CapsContainer();
-    encodingCaps  = new CapsContainer();
-
-    // Supported authentication methods
-    authCaps.add(AuthNone, StandardVendor, SigAuthNone,
-		 "No authentication");
-    authCaps.add(AuthVNC, StandardVendor, SigAuthVNC,
-		 "Standard VNC password authentication");
-
-    // Supported non-standard server-to-client messages
-    // [NONE]
-
-    // Supported non-standard client-to-server messages
-    // [NONE]
-
-    // Supported encoding types
-    encodingCaps.add(EncodingCopyRect, StandardVendor,
-		     SigEncodingCopyRect, "Standard CopyRect encoding");
-    encodingCaps.add(EncodingRRE, StandardVendor,
-		     SigEncodingRRE, "Standard RRE encoding");
-    encodingCaps.add(EncodingCoRRE, StandardVendor,
-		     SigEncodingCoRRE, "Standard CoRRE encoding");
-    encodingCaps.add(EncodingHextile, StandardVendor,
-		     SigEncodingHextile, "Standard Hextile encoding");
-    encodingCaps.add(EncodingZRLE, StandardVendor,
-		     SigEncodingZRLE, "Standard ZRLE encoding");
-    encodingCaps.add(EncodingZlib, TridiaVncVendor,
-		     SigEncodingZlib, "Zlib encoding");
-    encodingCaps.add(EncodingTight, TightVncVendor,
-		     SigEncodingTight, "Tight encoding");
-
-    // Supported pseudo-encoding types
-    encodingCaps.add(EncodingCompressLevel0, TightVncVendor,
-		     SigEncodingCompressLevel0, "Compression level");
-    encodingCaps.add(EncodingQualityLevel0, TightVncVendor,
-		     SigEncodingQualityLevel0, "JPEG quality level");
-    encodingCaps.add(EncodingXCursor, TightVncVendor,
-		     SigEncodingXCursor, "X-style cursor shape update");
-    encodingCaps.add(EncodingRichCursor, TightVncVendor,
-		     SigEncodingRichCursor, "Rich-color cursor shape update");
-    encodingCaps.add(EncodingPointerPos, TightVncVendor,
-		     SigEncodingPointerPos, "Pointer position update");
-    encodingCaps.add(EncodingLastRect, TightVncVendor,
-		     SigEncodingLastRect, "LastRect protocol extension");
-    encodingCaps.add(EncodingNewFBSize, TightVncVendor,
-		     SigEncodingNewFBSize, "Framebuffer size change");
-  }
-*/
 type TightServerInit struct {
 	ServerMessageCaps []TightCapability
 	ClientMessageCaps []TightCapability
@@ -346,10 +263,5 @@ func ServerClientInitHandler(cfg *ServerConfig, c *ServerConn) error {
 	if err := binary.Read(c, binary.BigEndian, &shared); err != nil {
 		return err
 	}
-	/* TODO
-	if shared != 1 {
-		c.SetShared(false)
-	}
-	*/
 	return nil
 }

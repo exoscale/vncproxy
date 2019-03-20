@@ -3,6 +3,7 @@ package player
 import (
 	"testing"
 	"time"
+
 	"github.com/exoscale/vncproxy/common"
 	"github.com/exoscale/vncproxy/encodings"
 	"github.com/exoscale/vncproxy/logger"
@@ -10,16 +11,11 @@ import (
 )
 
 func TestServer(t *testing.T) {
-
-	//chServer := make(chan common.ClientMessage)
-	//chClient := make(chan common.ServerMessage)
-
 	encs := []common.IEncoding{
 		&encodings.RawEncoding{},
 		&encodings.TightEncoding{},
 		&encodings.EncCursorPseudo{},
 		&encodings.EncLedStatePseudo{},
-		//encodings.TightPngEncoding{},
 		&encodings.RREEncoding{},
 		&encodings.ZLibEncoding{},
 		&encodings.ZRLEEncoding{},
@@ -29,7 +25,6 @@ func TestServer(t *testing.T) {
 	}
 
 	cfg := &server.ServerConfig{
-		//SecurityHandlers: []SecurityHandler{&ServerAuthNone{}, &ServerAuthVNC{}},
 		SecurityHandlers: []server.SecurityHandler{&server.ServerAuthNone{}},
 		Encodings:        encs,
 		PixelFormat:      common.NewPixelFormat(32),
@@ -40,8 +35,6 @@ func TestServer(t *testing.T) {
 	}
 
 	cfg.NewConnHandler = func(cfg *server.ServerConfig, conn *server.ServerConn) error {
-		//fbs, err := loadFbsFile("/Users/amitbet/Dropbox/recording.rbs", conn)
-		//fbs, err := loadFbsFile("/Users/amitbet/vncRec/recording.rbs", conn)
 		fbs, err := ConnectFbsFile("/Users/amitbet/vncRec/recording.rbs", conn)
 
 		if err != nil {
@@ -59,5 +52,4 @@ func TestServer(t *testing.T) {
 	for {
 		time.Sleep(time.Minute)
 	}
-
 }

@@ -3,6 +3,7 @@ package encodings
 import (
 	"bytes"
 	"io"
+
 	"github.com/exoscale/vncproxy/common"
 )
 

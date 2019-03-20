@@ -3,11 +3,11 @@ package encodings
 import (
 	"encoding/binary"
 	"io"
+
 	"github.com/exoscale/vncproxy/common"
 )
 
 type RREEncoding struct {
-	//Colors []Color
 	numSubRects     uint32
 	backgroundColor []byte
 	subRectData     []byte

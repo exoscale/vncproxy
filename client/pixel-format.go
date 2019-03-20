@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"io"
+
 	"github.com/exoscale/vncproxy/common"
 )
 

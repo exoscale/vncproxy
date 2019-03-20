@@ -2,6 +2,7 @@ package encodings
 
 import (
 	"io"
+
 	"github.com/exoscale/vncproxy/common"
 	"github.com/exoscale/vncproxy/logger"
 )
@@ -15,7 +16,6 @@ const (
 )
 
 type HextileEncoding struct {
-	//Colors []Color
 	bytes []byte
 }
 
@@ -45,7 +45,6 @@ func (z *HextileEncoding) Read(pixelFmt *common.PixelFormat, rect *common.Rectan
 				tw = int(rect.X) + int(rect.Width) - int(tx)
 			}
 
-			//handle Hextile Subrect(tx, ty, tw, th):
 			subencoding, err := r.ReadUint8()
 
 			if err != nil {
@@ -64,7 +63,6 @@ func (z *HextileEncoding) Read(pixelFmt *common.PixelFormat, rect *common.Rectan
 				r.ReadBytes(int(bytesPerPixel))
 			}
 			if (subencoding & HextileAnySubrects) == 0 {
-				//logger.Debug("hextile reader: no Subrects")
 				continue
 			}
 

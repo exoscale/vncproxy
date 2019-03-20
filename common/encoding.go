@@ -290,7 +290,6 @@ func (format *PixelFormat) WriteTo(w io.Writer) error {
 
 func NewPixelFormat(bpp uint8) *PixelFormat {
 	bigEndian := 0
-	//	rgbMax := uint16(math.Exp2(float64(bpp))) - 1
 	rMax := uint16(255)
 	gMax := uint16(255)
 	bMax := uint16(255)
@@ -309,7 +308,6 @@ func NewPixelFormat(bpp uint8) *PixelFormat {
 		rs, gs, bs = 0, 4, 8
 	case 32:
 		depth = 24
-		//	rs, gs, bs = 0, 8, 16
 		rs, gs, bs = 16, 8, 0
 	}
 

@@ -2,9 +2,9 @@ package player
 
 import (
 	"encoding/binary"
-
 	"io"
 	"time"
+
 	"github.com/exoscale/vncproxy/client"
 	"github.com/exoscale/vncproxy/common"
 	"github.com/exoscale/vncproxy/logger"
@@ -33,7 +33,6 @@ func ConnectFbsFile(filename string, conn *server.ServerConn) (*FbsReader, error
 		logger.Error("failed to open fbs reader:", err)
 		return nil, err
 	}
-	//NewFbsReader("/Users/amitbet/vncRec/recording.rbs")
 	initMsg, err := fbs.ReadStartSession()
 	if err != nil {
 		logger.Error("failed to open read fbs start session:", err)
@@ -58,14 +57,13 @@ func NewFBSPlayListener(conn *server.ServerConn, r *FbsReader) *FBSPlayListener 
 
 	return h
 }
+
 func (handler *FBSPlayListener) Consume(seg *common.RfbSegment) error {
 
 	switch seg.SegmentType {
 	case common.SegmentFullyParsedClientMessage:
 		clientMsg := seg.Message.(common.ClientMessage)
-		logger.Debugf("ClientUpdater.Consume:(vnc-server-bound) got ClientMessage type=%s", clientMsg.Type())
 		switch clientMsg.Type() {
-
 		case common.FramebufferUpdateRequestMsgType:
 			if !handler.firstSegDone {
 				handler.firstSegDone = true
@@ -73,22 +71,18 @@ func (handler *FBSPlayListener) Consume(seg *common.RfbSegment) error {
 			}
 			handler.sendFbsMessage()
 		}
-		// server.MsgFramebufferUpdateRequest:
 	}
 	return nil
 }
 
 func (h *FBSPlayListener) sendFbsMessage() {
 	var messageType uint8
-	//messages := make(map[uint8]common.ServerMessage)
 	fbs := h.Fbs
-	//conn := h.Conn
 	err := binary.Read(fbs, binary.BigEndian, &messageType)
 	if err != nil {
 		logger.Error("TestServer.NewConnHandler: Error in reading FBS segment: ", err)
 		return
 	}
-	//common.IClientConn{}
 	binary.Write(h.Conn, binary.BigEndian, messageType)
 	msg := h.serverMessageMap[messageType]
 	if msg == nil {
